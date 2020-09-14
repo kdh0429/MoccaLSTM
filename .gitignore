@@ -1,0 +1,24 @@
+.vscode/
+
+# Data
+data/2020*
+data/TestingDataFriction.csv
+data/TestingDataRaw.csv
+data/TrainingDataFriction.csv
+data/TrainingDataRaw.csv
+data/ValidationDataFriction.csv
+data/ResiMax.csv
+data/ResiIdx.csv
+data/MaxTrainingData.csv
+data/MinTrainingData.csv
+
+# Model
+checkpoints/
+
+# Results
+result/testing_result.csv
+result/esting_result_collision.csv
+result/Threshold.csv
+
+# Wandb
+wandb/
