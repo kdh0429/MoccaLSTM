@@ -4,12 +4,13 @@ format long
 
 %% For normalization
 hz = 100;
-num_data_type = 3;
+num_data_type = 2;
 num_joint = 2;
 num_input = num_joint*num_data_type;
 num_output = num_joint;
-num_time_step = 5;
-residual_type = 0; % 0: MOB no error, 1: MOB inertia error, 2: MOB mass error, 3: MOB com pos error, 4: MOB inertia, mass, com pos error, 5: MOB without model
+num_time_step = 100;
+
+residual_type = 4; % 0: MOB no error, 1: MOB inertia error, 2: MOB mass error, 3: MOB com pos error, 4: MOB inertia, mass, com pos error, 5: MOB without model
 residual_idx = 38;
 if residual_type == 0
     residual_idx = 38;
@@ -79,12 +80,6 @@ MinTrainingData = ...
 -59.3925000000000,-24.6553000000000,-61.5040000000000,-25.0828000000000,-62.5408000000000,-25.7415000000000, ... % 62    MOB inertia, mass, com pos error
 -81.4351000000000,-28.4360000000000,-83.8375000000000,-28.8301000000000,-84.7470000000000,-29.4291000000000];    % 68    MOB without model
 
-MaxResidual = MaxTrainingData(residual_idx:residual_idx+1);
-MinResidual = -MaxResidual;
-csvwrite('ResiMax.csv', MaxResidual);
-csvwrite('ResiIdx.csv', residual_idx);
-csvwrite('MaxTrainingData.csv', MaxTrainingData);
-csvwrite('MinTrainingData.csv', MinTrainingData);
 %% Data Set Concatenate
 Free_Aggregate_Data = [];
 FolderName = dir;
@@ -114,6 +109,15 @@ for joint_data = 1:size(DataFolderList,2)
     end
     cd ..;
 end
+
+MaxTrainingData = max(Free_Aggregate_Data,[],1);
+MinTrainingData = - MaxTrainingData;
+MaxResidual = MaxTrainingData(residual_idx:residual_idx+1);
+MinResidual = -MaxResidual;
+csvwrite('ResiMax.csv', MaxResidual);
+csvwrite('ResiIdx.csv', residual_idx);
+csvwrite('MaxTrainingData.csv', MaxTrainingData);
+csvwrite('MinTrainingData.csv', MinTrainingData);
 %% Data Preprocess
 RawData= zeros(size(Free_Aggregate_Data));
 FreeProcessData= zeros(size(Free_Aggregate_Data,1), num_input*num_time_step+num_output);
@@ -131,9 +135,9 @@ for k=num_time_step+1:size(Free_Aggregate_Data,1)
         continue
     end
     
-    if norm(Free_Aggregate_Data(k,30:31)) == 0
-        continue
-    end
+%     if norm(Free_Aggregate_Data(k,30:31)) == 0
+%         continue
+%     end
 
     % Output
     for joint_data = 1:2
@@ -144,10 +148,10 @@ for k=num_time_step+1:size(Free_Aggregate_Data,1)
    for time_step=1:num_time_step
         corri_idx = 1;
         for joint_data=1:2
-            FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+joint_data) = 2*(Free_Aggregate_Data(k-time_step+1,1+joint_data) - MinTrainingData(1,1+joint_data)) / (MaxTrainingData(1,1+joint_data) - MinTrainingData(1,1+joint_data)) -1; % theta
+            FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+joint_data) = 2*(Free_Aggregate_Data(k-time_step+1,31+joint_data) - MinTrainingData(1,31+joint_data)) / (MaxTrainingData(1,31+joint_data) - MinTrainingData(1,31+joint_data)) -1; % theta
             FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+2+joint_data) = 2*(Free_Aggregate_Data(k-time_step+1,5+joint_data) - MinTrainingData(1,5+joint_data)) / (MaxTrainingData(1,5+joint_data) - MinTrainingData(1,5+joint_data)) -1; % theta dot
-            %FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Free_Aggregate_Data(k-time_step,5+joint_data) - MinTrainingData(1,5+joint_data)) / (MaxTrainingData(1,5+joint_data) -MinTrainingData(1,5+joint_data)) -1; %theta_dot_pre
-            FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Free_Aggregate_Data(k-time_step,13+joint_data) - MinTrainingData(1,13+joint_data)) / (MaxTrainingData(1,13+joint_data) -MinTrainingData(1,13+joint_data)) -1; %theta_dot_pre
+            %FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Free_Aggregate_Data(k-time_step+1,1+joint_data) - MinTrainingData(1,1+joint_data)) / (MaxTrainingData(1,1+joint_data) -MinTrainingData(1,1+joint_data)) -1; %theta_dot_pre
+            %FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+6+joint_data)= 2*(Free_Aggregate_Data(k-time_step+1,7+joint_data) - MinTrainingData(1,7+joint_data)) / (MaxTrainingData(1,7+joint_data) -MinTrainingData(1,7+joint_data)) -1; %theta_dot_pre
         end
    end
    

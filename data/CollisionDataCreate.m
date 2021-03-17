@@ -2,11 +2,11 @@ format long
 
 %% For normalization
 hz = 100;
-num_data_type = 3;
+num_data_type = 2;
 num_joint = 2;
 num_input = num_joint*num_data_type;
 num_output = num_joint;
-num_time_step = 5;
+num_time_step = 100;
 
 MaxTrainingData = load('MaxTrainingData.csv');
 MinTrainingData = load('MinTrainingData.csv');
@@ -60,9 +60,9 @@ for k=num_time_step+1:size(Collision_Aggregate_Data,1)
         continue
     end
     
-    if norm(Collision_Aggregate_Data(k,30:31)) == 0
-        continue
-    end
+%     if norm(Collision_Aggregate_Data(k,30:31)) == 0
+%         continue
+%     end
 
     % Output
     for joint_data = 1:2
@@ -73,10 +73,10 @@ for k=num_time_step+1:size(Collision_Aggregate_Data,1)
    for time_step=1:num_time_step
         corri_idx = 1;
         for joint_data=1:2
-            CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+joint_data) = 2*(Collision_Aggregate_Data(k-time_step+1,1+joint_data) - MinTrainingData(1,1+joint_data)) / (MaxTrainingData(1,1+joint_data) - MinTrainingData(1,1+joint_data)) -1; % theta
+            CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+joint_data) = 2*(Collision_Aggregate_Data(k-time_step+1,31+joint_data) - MinTrainingData(1,31+joint_data)) / (MaxTrainingData(1,31+joint_data) - MinTrainingData(1,31+joint_data)) -1; % theta
             CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+2+joint_data) = 2*(Collision_Aggregate_Data(k-time_step+1,5+joint_data) - MinTrainingData(1,5+joint_data)) / (MaxTrainingData(1,5+joint_data) - MinTrainingData(1,5+joint_data)) -1; % theta dot
-            %FreeProcessData(FreeProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Free_Aggregate_Data(k-time_step,5+joint_data) - MinTrainingData(1,5+joint_data)) / (MaxTrainingData(1,5+joint_data) -MinTrainingData(1,5+joint_data)) -1; %theta_dot_pre
-            CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Collision_Aggregate_Data(k-time_step,13+joint_data) - MinTrainingData(1,13+joint_data)) / (MaxTrainingData(1,13+joint_data) -MinTrainingData(1,13+joint_data)) -1; %theta_dot_pre
+            %CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+4+joint_data)= 2*(Collision_Aggregate_Data(k-time_step+1,1+joint_data) - MinTrainingData(1,1+joint_data)) / (MaxTrainingData(1,1+joint_data) -MinTrainingData(1,1+joint_data)) -1; %theta_dot_pre
+            %CollisionProcessData(CollisionProcessDataIdx,num_input*(num_time_step-time_step)+6+joint_data)= 2*(Collision_Aggregate_Data(k-time_step,7+joint_data) - MinTrainingData(1,7+joint_data)) / (MaxTrainingData(1,7+joint_data) -MinTrainingData(1,7+joint_data)) -1; %theta_dot_desired
         end
    end
    

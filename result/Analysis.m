@@ -51,7 +51,9 @@ for j=1:2
     plot(ResidualEstimate(:,j))
     hold on
     plot(FrictionModelLSTM(:,j))
-    legend('MOB','LSTM')
+    plot(TestingRaw(:,29+j)*5)
+    plot(TestingRaw(:,5+j)*5)
+    legend('MOB','LSTM','qdot_d','qdot')
 end
 
 %% Plot qdot
@@ -107,5 +109,11 @@ mean(abs(PolyErr),1)
 disp('LSTM Error Mean: ')
 mean(abs(LSTMErr),1)
 disp('LSTM Threshold: ')
+for i=1:size(LSTMErr,1)
+    if TestingRaw(i,30) == 0
+        LSTMErr(i,1) = 0.0;
+        LSTMErr(i,2) = 0.0;
+    end
+end
 [threshold, idx] = max(abs(LSTMErr),[],1)
 csvwrite('Threshold.csv', threshold);

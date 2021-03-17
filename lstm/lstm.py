@@ -83,7 +83,9 @@ class FrictionLSTM(nn.Module):
                 self._optim.zero_grad()
                 inputs = inputs.to(self._device)
                 outputs = outputs.to(self._device)
+                # time_pre = time.time()
                 predictions = self.forward(inputs)
+                # print("Time: ", time.time()-time_pre)
                 train_loss = nn.L1Loss(reduction='sum')(predictions, outputs) / inputs.shape[0]
                 train_loss.backward()
 
@@ -144,7 +146,6 @@ class FrictionLSTM(nn.Module):
                 predictions.extend(self._to_numpy(preds))
 
             np.savetxt("./result/testing_result_collision.csv", predictions, delimiter=",")
-
 
     def evaluate(self, validationloader):
         """

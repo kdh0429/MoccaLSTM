@@ -11,6 +11,7 @@ from datetime import datetime
 
 from lstm.lstm import FrictionLSTM
 from utils.data import FrictionDataset
+import numpy as np
 
 import wandb
 
@@ -43,7 +44,7 @@ def load_config(args):
     config.read(default_model_config_path)
 
     config.set('device', 'device', 'cuda' if torch.cuda.is_available() else 'cpu')
-
+    # config.set('device', 'device', 'cpu')
     return config
 
 
@@ -62,6 +63,16 @@ def run(config, trainloader, validatonloader, testloader, test_collision_loader=
         lstm.test(testloader)
     else:
         lstm.test(testloader,test_collision_loader)
+
+    lstm.to('cpu')
+    jit_example = torch.rand(1, config.getint("data", "seqeunce_length"), config.getint("data", "n_input_feature"))
+    with torch.no_grad():
+        traced_script_module = torch.jit.trace(lstm.forward, jit_example)
+    traced_script_module.save("model.pt")
+
+    for name, param in lstm.state_dict().items():
+        file_name = "./result/" + name + ".txt"
+        np.savetxt(file_name, param.data)
 
 if __name__ == '__main__':
     args = argparser()

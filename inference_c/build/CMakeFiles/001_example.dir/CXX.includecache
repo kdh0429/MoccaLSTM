@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kim/mocca/inference_c/main.cpp
+iostream
+-
+memory
+-
+ctime
+-
+ratio
+-
+chrono
+-
+fstream
+-
+string
+-
+stdio.h
+-
+cmath
+-
+sstream
+-
+
