@@ -12,6 +12,8 @@ data/ResiIdx.csv
 data/MaxTrainingData.csv
 data/MinTrainingData.csv
 
+OneClassSVM/data/
+
 # Model
 checkpoints/
 
